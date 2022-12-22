@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use super::{BACKGROUND_COLOR, PLAYER_COLOR};
 
 pub struct Player {
     position: Vec2,
@@ -9,9 +10,9 @@ pub struct Player {
 }
 
 impl Player {
-    const SPEED: f32 = 100.0;
+    const SPEED: f32 = 200.0;
     const DASH_SPEED: f32 = 500.0;
-    const RADIUS: f32 = 10.0;
+    const RADIUS: f32 = 12.0;
     const DASH_DURATION: f32 = 0.12;
 
     pub fn init() -> Self {
@@ -37,7 +38,6 @@ impl Player {
     }
 
     pub fn update(&mut self) {
-
 
         if is_key_down(KeyCode::W) {
             self.velocity = Vec2 { x: 0., y: -1.};
@@ -65,11 +65,12 @@ impl Player {
             }
         }
 
-        self.position = self.position .clamp(Vec2::ZERO, Vec2 { x: screen_width(), y: screen_height()})
-
+        self.position = self.position.clamp(Vec2::ZERO, Vec2 { x: screen_width(), y: screen_height()})
     }
 
     pub fn draw(&self) {
-        draw_circle(self.position.x, self.position.y, Self::RADIUS, RED);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS, PLAYER_COLOR);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS-3.0, BACKGROUND_COLOR);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS-5.0, PLAYER_COLOR);
     }
 }
