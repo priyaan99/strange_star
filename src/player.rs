@@ -1,44 +1,75 @@
 use macroquad::prelude::*;
-use crate::vector::*;
 
 pub struct Player {
-    position: Vector2,
-    direction: Vector2,
-    radius: f32,
+    position: Vec2,
+    velocity: Vec2,
+    dashing: bool,
+    dash_dir: Vec2,
+    timer: f32,
 }
 
 impl Player {
-    pub fn new() -> Self {
+    const SPEED: f32 = 100.0;
+    const DASH_SPEED: f32 = 500.0;
+    const RADIUS: f32 = 10.0;
+    const DASH_DURATION: f32 = 0.12;
+
+    pub fn init() -> Self {
         Self {
-            position: Vector2 { x: screen_width()/2., y: screen_height()/2. },
-            direction: Vector2::ZERO,
-            radius: 10.,
+            position: Vec2 { x: screen_width()/2., y: screen_height()/2. },
+            velocity: Vec2::ZERO,
+            dashing: false,
+            dash_dir: Vec2::X,
+            timer: 0.0,
         }
+    }
+
+    fn dash(&mut self) {
+        self.timer += get_frame_time();
+
+        if self.timer >= Self::DASH_DURATION {
+            self.timer = 0.0;
+            self.dashing = false;
+            return;
+        } 
+
+        self.position += self.dash_dir * Self::DASH_SPEED * get_frame_time();
     }
 
     pub fn update(&mut self) {
 
+
         if is_key_down(KeyCode::W) {
-            self.direction = Vector2 { x: 0., y: -1.};
+            self.velocity = Vec2 { x: 0., y: -1.};
         } else if is_key_down(KeyCode::S) {
-            self.direction = Vector2 { x: 0., y: 1.};
+            self.velocity = Vec2 { x: 0., y: 1.};
         } else if is_key_down(KeyCode::A) {
-            self.direction = Vector2 { x: -1., y: 0.};
+            self.velocity = Vec2 { x: -1., y: 0.};
         } else if is_key_down(KeyCode::D) {
-            self.direction = Vector2 { x: 1., y: 0.};
+            self.velocity = Vec2 { x: 1., y: 0.};
         } else {
-            self.direction = Vector2::ZERO;
+            self.velocity = Vec2::ZERO;
         }
 
-        const SPEED: f32 = 5.;
+        if is_key_pressed(KeyCode::Space) && !self.dashing {
+            self.dashing = true;
+        } 
 
-        self.position = self.position.add(self.direction.mul_val(SPEED));
+        if self.dashing {
+            self.dash()
+        } else {
+            self.position += self.velocity * Self::SPEED * get_frame_time();
 
-        self.position = self.position
-            .clamp(Vector2{ x: 0., y: 0.}, Vector2 { x: screen_width(), y: screen_height()})
+            if self.velocity != Vec2::ZERO {
+                self.dash_dir = self.velocity;
+            }
+        }
+
+        self.position = self.position .clamp(Vec2::ZERO, Vec2 { x: screen_width(), y: screen_height()})
+
     }
 
     pub fn draw(&self) {
-        draw_circle(self.position.x, self.position.y, self.radius, RED);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS, RED);
     }
 }

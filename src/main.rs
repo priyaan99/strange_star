@@ -13,8 +13,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf())]
 async fn main() {
-    let mut app = game::State::new();
-    app.init();
+    let mut app = game::State::init();
 
     loop {
         app.run();

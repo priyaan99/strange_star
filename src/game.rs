@@ -6,14 +6,10 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Self { 
+    pub fn init() -> State {
         Self {
-            player: Player::new(),
-        } 
-    }
-
-    pub fn init(&mut self) {
-        self.player = Player::new();
+            player: Player::init(),
+        }
     }
 
     fn update(&mut self) {
