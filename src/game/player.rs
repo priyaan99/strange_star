@@ -12,7 +12,7 @@ pub struct Player {
 impl Player {
     const SPEED: f32 = 200.0;
     const DASH_SPEED: f32 = 500.0;
-    const RADIUS: f32 = 12.0;
+    const RADIUS: f32 = 14.0;
     const DASH_DURATION: f32 = 0.12;
 
     pub fn init() -> Self {
@@ -70,7 +70,7 @@ impl Player {
 
     pub fn draw(&self) {
         draw_circle(self.position.x, self.position.y, Self::RADIUS, PLAYER_COLOR);
-        draw_circle(self.position.x, self.position.y, Self::RADIUS-3.0, BACKGROUND_COLOR);
-        draw_circle(self.position.x, self.position.y, Self::RADIUS-5.0, PLAYER_COLOR);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS-4.0, BACKGROUND_COLOR);
+        draw_circle(self.position.x, self.position.y, Self::RADIUS-6.0, PLAYER_COLOR);
     }
 }
