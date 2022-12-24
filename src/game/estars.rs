@@ -1,51 +1,44 @@
 use macroquad::prelude::*;
 use super::{ESTAR_COLOR, lerp}; 
 
-#[derive(Debug)]
-pub struct Estars {
-    pub stars: Vec<Estar>,
-    player_pos: Vec2,
-    min_distance: i32,
-}
+// impl Estars {
+//     pub fn init(
+//         num_of_stars: usize,
+//         player_pos: Vec2,
+//         min_distance: i32, 
+//     ) -> Self {
 
-impl Estars {
-    pub fn init(
-        num_of_stars: usize,
-        player_pos: Vec2,
-        min_distance: i32, 
-    ) -> Self {
+//         let mut stars: Vec<Estar> = vec![];
+//         for _ in 0..num_of_stars {
+//             stars.push(Estar::init(player_pos, min_distance))
+//         }
 
-        let mut stars: Vec<Estar> = vec![];
-        for _ in 0..num_of_stars {
-            stars.push(Estar::init(player_pos, min_distance))
-        }
+//         Self {
+//             stars,
+//             player_pos,
+//             min_distance,
+//         }
+//     }
 
-        Self {
-            stars,
-            player_pos,
-            min_distance,
-        }
-    }
+//     pub fn update(&mut self, player_pos: Vec2)  {
+//         self.player_pos = player_pos;
 
-    pub fn update(&mut self, player_pos: Vec2)  {
-        self.player_pos = player_pos;
+//         for star in &mut self.stars {
+//             star.update(self.player_pos, self.min_distance);
+//         }
+//     }
 
-        for star in &mut self.stars {
-            star.update(self.player_pos, self.min_distance);
-        }
-    }
-
-    pub fn draw(&self)  {
-        for star in &self.stars {
-            star.draw();
-        }
-    }
-}
-
+//     pub fn draw(&self)  {
+//         for star in &self.stars {
+//             star.draw();
+//         }
+//     }
+// }
 #[derive(Debug)]
 pub struct Estar {
     pub position: Vec2,
     direction: Vec2,
+    pub speed: f32,
     pub radius: f32,
     pub active: bool,
     timer: f32,
@@ -55,8 +48,8 @@ pub struct Estar {
 
 impl Estar {
 
-    const SPEED: f32    = 180.0;
-    const MAX_RADIUS: f32   = 16.0;
+    const MAX_RADIUS: f32   = 12.0;
+    const MIN_SPEED: f32    = 150.0;
     
     pub fn init(player_pos: Vec2, min_distance: i32) -> Self {
         let position = Self::get_pos(player_pos, min_distance);  
@@ -66,6 +59,7 @@ impl Estar {
         Self {
             position,
             direction,
+            speed: Self::MIN_SPEED,
             radius,
             active: false,
             star_time,
@@ -88,13 +82,7 @@ impl Estar {
 
         // now active
         self.radius = lerp(self.radius, Self::MAX_RADIUS, 0.05);
-        self.position += self.direction * Self::SPEED * get_frame_time();
-
-        // player collision
-        if self.destroy {
-            *self = Self::init(player_pos, min_distance);
-            return;
-        }
+        self.position += self.direction * self.speed * get_frame_time();
         
         // out of screen
         if self.position.x < -self.radius
@@ -104,6 +92,10 @@ impl Estar {
         {
             *self = Self::init(player_pos, min_distance)
         }
+    }
+
+    pub fn destroy(&mut self, player_pos: Vec2, min_distance: i32) {
+        *self = Self::init(player_pos, min_distance)
     }
 
     // runs when star is active
