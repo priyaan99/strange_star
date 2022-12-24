@@ -2,9 +2,9 @@ use macroquad::prelude::*;
 use super::{BACKGROUND_COLOR, PLAYER_COLOR};
 
 pub struct Player {
-    position: Vec2,
+    pub position: Vec2,
     velocity: Vec2,
-    dashing: bool,
+    pub dashing: bool,
     dash_dir: Vec2,
     timer: f32,
 }
@@ -12,7 +12,7 @@ pub struct Player {
 impl Player {
     const SPEED: f32 = 200.0;
     const DASH_SPEED: f32 = 500.0;
-    const RADIUS: f32 = 14.0;
+    pub const RADIUS: f32 = 14.0;
     const DASH_DURATION: f32 = 0.12;
 
     pub fn init() -> Self {
